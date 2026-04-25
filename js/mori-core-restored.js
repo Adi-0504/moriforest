@@ -188,7 +188,6 @@ function AccountManager() {
 function ForestPage() {
     const [streak, setStreak] = useState(0);
     const [timeStage, setTimeStage] = useState('morning');
-    const [season, setSeason] = useState('summer');
 
     useEffect(() => {
         const update = () => {
@@ -202,12 +201,6 @@ function ForestPage() {
             else if (hour >= 11 && hour < 16) setTimeStage('noon');
             else if (hour >= 16 && hour < 19) setTimeStage('sunset');
             else setTimeStage('night');
-
-            const month = now.getMonth() + 1; // 1-12
-            if (month >= 3 && month <= 5) setSeason('spring');
-            else if (month >= 6 && month <= 8) setSeason('summer');
-            else if (month >= 9 && month <= 11) setSeason('autumn');
-            else setSeason('winter');
         };
         update();
         window.addEventListener('transactionsChanged', update);
@@ -224,23 +217,8 @@ function ForestPage() {
         return { class: 'seedling', title: '希望幼苗', desc: '種下希望的種子。' };
     }, [streak]);
 
-    // Generate Particles for Seasons (Spring, Autumn, Winter)
-    const particles = useMemo(() => {
-        if (season === 'summer') return [];
-        const typeMap = { spring: 'particle-flower', autumn: 'particle-leaf', winter: 'particle-snow' };
-        return Array.from({ length: 15 }).map((_, i) => ({
-            id: i,
-            className: `seasonal-particle ${typeMap[season]}`,
-            left: `${Math.random() * 100}%`,
-            delay: `${Math.random() * 10}s`,
-            duration: `${5 + Math.random() * 5}s`
-        }));
-    }, [season]);
-
-    return e('div', { className: `forest-container theme-${timeStage} season-${season}` },
+    return e('div', { className: `forest-container theme-${timeStage}` },
         e('div', { className: `celestial-body ${timeStage === 'night' ? 'moon' : 'sun'}` }),
-        // Render Seasonal Particles
-        particles.map(p => e('div', { key: p.id, className: p.className, style: { left: p.left, animationDelay: p.delay, animationDuration: p.duration } })),
         e('div', { className: 'tree-stage-container' },
             e('div', { className: stage.class }, stage.class === 'big-tree' && e('div', { className: 'tree-leaves' }))
         ),
@@ -248,7 +226,7 @@ function ForestPage() {
             e('div', { className: 'growth-title' }, stage.title),
             e('div', { className: 'growth-desc' }, stage.desc),
             e('div', { style: { marginTop: '12px', fontSize: '0.8rem', color: 'var(--primary)', fontWeight: 700 } },
-                `${season === 'spring' ? '春季' : season === 'summer' ? '夏季' : season === 'autumn' ? '秋季' : '冬季'} | ${timeStage === 'dawn' ? '清晨' : timeStage === 'morning' ? '上午' : timeStage === 'noon' ? '正午' : timeStage === 'sunset' ? '黃昏' : '夜晚'} (第 ${streak} 天)`
+                `${timeStage === 'dawn' ? '清晨' : timeStage === 'morning' ? '上午' : timeStage === 'noon' ? '正午' : timeStage === 'sunset' ? '黃昏' : '夜晚'} (第 ${streak} 天)`
             )
         )
     );

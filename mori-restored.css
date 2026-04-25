@@ -13,17 +13,12 @@
     --income-bg: rgba(47, 107, 79, 0.1);
     --border: rgba(47, 107, 79, 0.1);
     --nav-bg: #FFFFFF;
-    /* 頂級平滑陰影 (Smooth Shadows) 系統 */
-    --shadow-sm: 0 1px 2px rgba(0,0,0,0.02), 0 4px 8px rgba(0,0,0,0.02);
-    --shadow-md: 0 2px 4px rgba(0,0,0,0.02), 0 8px 24px rgba(0,0,0,0.04);
-    --shadow-lg: 0 4px 12px rgba(0,0,0,0.03), 0 16px 40px rgba(0,0,0,0.06);
-    --glass-border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-    font-family: 'Outfit', 'Inter', 'Microsoft JhengHei', '微軟正黑體', -apple-system, sans-serif;
+    font-family: 'Nunito', 'Microsoft JhengHei', '微軟正黑體', -apple-system, sans-serif;
     color: var(--text-primary);
     background-color: var(--bg-page);
     overflow: hidden; 
@@ -58,7 +53,7 @@ body {
     margin: 0 auto;
     background-color: var(--card-bg);
     position: relative;
-    box-shadow: var(--shadow-lg); 
+    box-shadow: 0 0 40px rgba(0,0,0,0.08); 
 }
 
 /* Top Header */
@@ -99,7 +94,7 @@ body {
 .modal.active { opacity: 1; pointer-events: all; }
 .modal-content {
     background-color: var(--card-bg); width: 100%; max-width: 360px;
-    border-radius: 20px; padding: 24px; box-shadow: var(--shadow-lg);
+    border-radius: 20px; padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.1);
     transform: translateY(20px); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 .modal.active .modal-content { transform: translateY(0); }
@@ -228,14 +223,14 @@ body {
     content: ''; position: absolute; bottom: 4px; width: 4px; height: 4px; border-radius: 50%; background-color: var(--primary);
 }
 .days-grid button.today { color: var(--primary); font-weight: 700; background: var(--income-bg);}
-.days-grid button.selected { background-color: var(--primary); color: white; box-shadow: 0 4px 12px rgba(47, 107, 79, 0.4), 0 8px 24px rgba(47, 107, 79, 0.2); }
+.days-grid button.selected { background-color: var(--primary); color: white; box-shadow: 0 4px 10px rgba(47, 107, 79, 0.3); }
 
 /* Transactions list */
 .transactions-section {
     background: #FFFFFF;
     border-radius: 16px;
     padding: 16px;
-    box-shadow: var(--shadow-md);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.02);
     min-height: 250px;
 }
 .section-header { margin-bottom: 16px; }
@@ -287,7 +282,7 @@ body {
 .settings-action.danger { color: var(--expense); }
 
 /* Accounts Page / Balance */
-.balance-section { background: #FFFFFF; border-radius: 16px; padding: 24px; margin-bottom: 16px; box-shadow: var(--shadow-md); }
+.balance-section { background: #FFFFFF; border-radius: 16px; padding: 24px; margin-bottom: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
 .main-balance { font-size: 2.2rem; font-weight: 700; word-break: break-all;}
 .balance-summary { display: flex; align-items: center; }
 .summary-item { flex: 1; display: flex; align-items: center; gap: 10px;}
@@ -307,7 +302,7 @@ body {
 .type-btn[data-type="income"].active { background: var(--income); border-color: var(--income); color:white;}
 .type-btn[data-type="expense"].active { background: var(--expense); border-color: var(--expense); color:white;}
 
-.form-wrapper { background: #FFFFFF; border-radius: 16px; padding: 24px; box-shadow: var(--shadow-md);}
+.form-wrapper { background: #FFFFFF; border-radius: 16px; padding: 24px; box-shadow: 0 2px 10px rgba(0,0,0,0.02);}
 
 /* Gamification: Streak Badge & Micro-Interactions */
 .streak-badge {
@@ -333,7 +328,7 @@ body {
 }
 
 /* React Quick Add */
-.quick-add-wrapper { background: #FFFFFF; border-radius: 16px; box-shadow: var(--shadow-md); }
+.quick-add-wrapper { background: #FFFFFF; border-radius: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
 .pulse-anim { animation: pulseBg 0.5s ease-out; }
 @keyframes pulseBg { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(47, 107, 79, 0.4); } 50% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(47, 107, 79, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(47, 107, 79, 0); } }
 
@@ -354,7 +349,7 @@ body {
     cursor: pointer;
     border: 2px solid transparent;
     transition: all 0.2s ease;
-    box-shadow: var(--shadow-sm);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
 }
 .account-item.active {
     border-color: var(--primary);
@@ -498,14 +493,13 @@ body {
 .growth-info {
     width: 100%;
     text-align: center;
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(24px) saturate(180%);
-    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(8px);
     padding: 16px;
     border-radius: 16px;
-    border: var(--glass-border);
+    border: 1px solid rgba(255,255,255,0.5);
     z-index: 10;
-    box-shadow: var(--shadow-lg);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
 }
 
 .growth-title {
@@ -564,121 +558,3 @@ body {
 .theme-night .growth-info { background: rgba(0, 0, 0, 0.4); border-color: rgba(255,255,255,0.1); color: white; }
 .theme-night .growth-title { color: #81D4FA; }
 .theme-night .growth-desc { color: #BDBDBD; }
-
-/* =========================================
-   --- Premium Seasonal Themes (頂級季節環境) ---
-   ========================================= */
-
-/* 春季 (Spring) - 夢幻櫻吹雪：多層次暖粉色光暈與晨露感 */
-.forest-container.season-spring { 
-    background: linear-gradient(160deg, #FFF0F5 0%, #FFE6EE 40%, #FAD0C4 100%) !important; 
-}
-.forest-container.season-spring::before {
-    content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-    background: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.7) 0%, transparent 60%);
-    pointer-events: none; z-index: 1;
-}
-
-/* 夏季 (Summer) - 盛夏光年：深邃翠綠與穿透樹冠的耶穌光 */
-.forest-container.season-summer { 
-    background: linear-gradient(160deg, #E0F2F1 0%, #C8E6C9 50%, #81C784 100%) !important; 
-}
-.forest-container.season-summer::before {
-    content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-    background: radial-gradient(circle at top right, rgba(255,255,255,0.6) 0%, transparent 50%),
-                linear-gradient(110deg, transparent 20%, rgba(255,255,255,0.2) 40%, transparent 60%);
-    pointer-events: none; z-index: 1;
-}
-
-/* 秋季 (Autumn) - 琥珀之秋：高飽和度的琥珀、焦糖色與光影交錯 */
-.forest-container.season-autumn { 
-    background: linear-gradient(160deg, #FFF3E0 0%, #FFE0B2 40%, #FFB74D 100%) !important; 
-}
-.forest-container.season-autumn::before {
-    content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-    background: radial-gradient(circle at 20% 10%, rgba(255, 255, 255, 0.5) 0%, transparent 60%);
-    pointer-events: none; z-index: 1;
-}
-
-/* 冬季 (Winter) - 極光冰雪：冷冽的深邃藍色與冰晶反光 */
-.forest-container.season-winter { 
-    background: linear-gradient(160deg, #E3F2FD 0%, #BBDEFB 40%, #64B5F6 100%) !important; 
-}
-.forest-container.season-winter::before {
-    content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-    background: radial-gradient(circle at 50% -10%, rgba(255, 255, 255, 0.8) 0%, transparent 70%);
-    pointer-events: none; z-index: 1;
-}
-
-/* =========================================
-   --- Premium Particles (頂級 3D 物理特效粒子) ---
-   ========================================= */
-
-/* 基礎粒子設定：引入貝茲曲線動畫與 3D 運算準備 */
-.seasonal-particle {
-    position: absolute;
-    pointer-events: none; /* 避免干擾使用者點擊 */
-    z-index: 5; /* 確保在背景上方但在彈出視窗下方 */
-    /* 結合 3D 翻滾與自然風場的複合動畫 */
-    animation: premiumFall cubic-bezier(0.4, 0.0, 0.2, 1) infinite; 
-    will-change: transform, opacity; /* 效能優化：啟用 GPU 渲染 */
-}
-
-/* 頂級物理掉落動畫：引入 3D 旋轉 (rotate3d) 創造空間深度，模擬真實空氣阻力與微風 */
-@keyframes premiumFall {
-    0% { 
-        transform: translate3d(0, -50px, 0) rotateX(0deg) rotateY(0deg) rotateZ(0deg); 
-        opacity: 0; 
-    }
-    15% { 
-        opacity: 1; /* 快速淡入展現光澤 */
-    }
-    50% { 
-        /* 使用質數角度 (如 137deg, 83deg) 模擬有機、不規則的自然微風翻滾，打破數學規律 */
-        transform: translate3d(47px, 211px, 53px) rotateX(137deg) rotateY(83deg) rotateZ(167deg); 
-    }
-    85% {
-        opacity: 0.8;
-    }
-    100% { 
-        /* 最終飄落並淡出，完成一個華麗且非線性的旋轉 */
-        transform: translate3d(-31px, 457px, -41px) rotateX(347deg) rotateY(263deg) rotateZ(353deg); 
-        opacity: 0; 
-    }
-}
-
-/* 櫻花花瓣 (Spring) - 仿真絲綢質感與漸層光暈，極致優雅 */
-.particle-flower { 
-    width: 16px; 
-    height: 16px; 
-    /* 多層次漸層模擬花瓣脈絡與透光感 */
-    background: radial-gradient(circle at 30% 30%, #FFFFFF 0%, #FFB7C5 50%, #FF8DA1 100%);
-    border-radius: 100% 0 100% 0; /* 更銳利精緻的花瓣邊緣 */
-    /* 外陰影營造環境光暈，內陰影增加厚度立體感 */
-    box-shadow: 0 4px 12px rgba(255, 141, 161, 0.6), inset 2px 2px 4px rgba(255, 255, 255, 0.8);
-    filter: drop-shadow(0 0 4px rgba(255, 183, 197, 0.5)); /* 額外的柔和光澤 */
-}
-
-/* 楓葉 (Autumn) - 多色漸層模擬枯葉真實紋理，帶有溫暖的高光 */
-.particle-leaf { 
-    width: 20px; 
-    height: 12px; 
-    /* 橘紅過渡到金黃的真實葉片感 */
-    background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 40%, #FFA836 100%);
-    border-radius: 100% 0 100% 0; /* 細長且帶有弧度的葉片外型 */
-    /* 琥珀色外發光與微弱白色高光反射 */
-    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.5), inset 1px 1px 2px rgba(255, 255, 255, 0.4);
-    filter: drop-shadow(0 0 4px rgba(255, 142, 83, 0.4));
-}
-
-/* 雪晶 (Winter) - 核心耀眼、邊緣擴散的真實雪光折射效果 */
-.particle-snow { 
-    width: 8px; 
-    height: 8px; 
-    /* 核心極白，邊緣羽化的雪球 */
-    background: radial-gradient(circle at center, #FFFFFF 20%, rgba(255, 255, 255, 0.4) 80%, transparent 100%);
-    border-radius: 50%; 
-    /* 雙層光暈：內層純白發光，外層帶有冰晶藍色的擴散光 */
-    box-shadow: 0 0 15px 3px rgba(255, 255, 255, 0.9), 0 0 5px 1px rgba(100, 181, 246, 0.5);
-}
-
