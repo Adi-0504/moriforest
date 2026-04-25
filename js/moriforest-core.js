@@ -248,7 +248,7 @@ function ForestPage() {
             e('div', { className: 'growth-title' }, stage.title),
             e('div', { className: 'growth-desc' }, stage.desc),
             e('div', { style: { marginTop: '12px', fontSize: '0.8rem', color: 'var(--primary)', fontWeight: 700 } },
-                `連續第 ${streak} 天 | ${season === 'spring' ? '春季' : season === 'summer' ? '夏季' : season === 'autumn' ? '秋季' : '冬季'}`
+                `${season === 'spring' ? '春季' : season === 'summer' ? '夏季' : season === 'autumn' ? '秋季' : '冬季'} | ${timeStage === 'dawn' ? '清晨' : timeStage === 'morning' ? '上午' : timeStage === 'noon' ? '正午' : timeStage === 'sunset' ? '黃昏' : '夜晚'} (第 ${streak} 天)`
             )
         )
     );
