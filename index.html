@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <!-- PWA / App Standalone Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#F6F8F5">
+    <title>Forest Finance</title>
+    <link rel="icon" href="icon.png">
+    <link rel="apple-touch-icon" href="icon.png">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js dependency for charting feature -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        if (!localStorage.getItem('forest_finance_active_user')) {
+            window.location.href = 'login.html';
+        }
+    </script>
+</head>
+
+<body>
+    <div class="app-layout">
+
+        <!-- Header -->
+        <header class="app-topbar">
+            <!-- Left Streak Counter -->
+            <div style="width:50px; display:flex; align-items:center;">
+                <div id="streak-badge" class="streak-badge" title="連續記帳天數">
+                    <i data-lucide="flame"></i><span id="streak-count" style="margin-left: 2px;">0</span>
+                </div>
+            </div>
+
+            <h1 id="page-title" data-i18n="title_ledger" style="flex:1; text-align:center;">帳本</h1>
+
+            <!-- Global Setting Globe Icon -->
+            <div style="width:50px; display:flex; justify-content:flex-end;">
+                <button id="globe-btn" class="topbar-action-btn" aria-label="Global Settings">
+                    <i data-lucide="globe"></i>
+                </button>
+            </div>
+        </header>
+
+        <main class="pages-container">
+
+            <!-- Ledger -->
+            <section id="page-ledger" class="page-section active">
+                <div class="calendar-wrapper">
+                    <div class="calendar-header">
+                        <button class="cal-btn" id="prev-month"><i data-lucide="chevron-left"></i></button>
+                        <h2 id="month-year-display"></h2>
+                        <button class="cal-btn" id="next-month"><i data-lucide="chevron-right"></i></button>
+                    </div>
+                    <div class="calendar-grid days-of-week" id="days-of-week-header">
+                        <!-- JS injected localized days -->
+                    </div>
+                    <div class="calendar-grid days-grid" id="calendar-days"></div>
+                </div>
+
+                <div class="transactions-section">
+                    <div class="section-header">
+                        <h2 id="selected-date-display" data-i18n="day_activity">紀錄</h2>
+                    </div>
+                    <div class="transaction-list" id="transaction-list"></div>
+                </div>
+            </section>
+
+            <!-- Accounts -->
+            <section id="page-accounts" class="page-section">
+                <div class="balance-section">
+                    <h2 style="margin-bottom:12px; font-weight:600; color:var(--text-primary); font-size: 1.1rem;"
+                        data-i18n="acc_total">總資產結餘</h2>
+                    <h1 class="main-balance" id="acc-total-balance">$0.00</h1>
+
+                    <div class="balance-summary" style="margin-top:24px;">
+                        <div class="summary-item income">
+                            <div class="summary-icon"><i data-lucide="arrow-down-left"></i></div>
+                            <div class="summary-text">
+                                <span class="summary-label" data-i18n="acc_total_in">歷史總收入</span>
+                                <span class="summary-amount" id="acc-total-income">$0.00</span>
+                            </div>
+                        </div>
+                        <div class="summary-divider"></div>
+                        <div class="summary-item expense">
+                            <div class="summary-icon"><i data-lucide="arrow-up-right"></i></div>
+                            <div class="summary-text">
+                                <span class="summary-label" data-i18n="acc_total_out">歷史總支出</span>
+                                <span class="summary-amount" id="acc-total-expense">$0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- React Account Manager -->
+                <div id="account-manager-root"></div>
+            </section>
+
+            <!-- Add -->
+            <section id="page-add" class="page-section">
+                <!-- React Quick Add Mount Point -->
+                <div id="quick-add-root"></div>
+
+                <div class="form-wrapper">
+                    <div class="type-selector">
+                        <button type="button" class="type-btn active" data-type="expense"
+                            data-i18n="btn_add_expense">支出</button>
+                        <button type="button" class="type-btn" data-type="income" data-i18n="btn_add_income">收入</button>
+                    </div>
+
+                    <form id="tx-form">
+                        <input type="hidden" id="tx-type" value="expense">
+
+                        <div class="form-group">
+                            <label data-i18n="label_date">日期</label>
+                            <input type="date" id="tx-date" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label data-i18n="label_amount">金額</label>
+                            <input type="number" id="tx-amount" step="0.01" min="0" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label data-i18n="label_category">類別</label>
+                            <select id="tx-category" required></select>
+                        </div>
+
+                        <div class="form-group">
+                            <label data-i18n="label_note">備註 (選填)</label>
+                            <input type="text" id="tx-note" data-i18n-pl="pl_note" placeholder="記錄細節"
+                                autocomplete="off">
+                        </div>
+
+                        <button type="submit" class="submit-btn" id="submit-btn" data-i18n="btn_save">儲存紀錄</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Charts -->
+            <section id="page-charts" class="page-section">
+                <div class="form-wrapper" style="text-align:center;">
+                    <h2 style="margin-bottom:16px;font-size:1rem;color:var(--text-muted);" data-i18n="chart_title">
+                        歷史各類別支出比例</h2>
+                    <!-- Chart.js Canvas -->
+                    <div style="position:relative; width:100%; max-width:300px; margin: 0 auto; min-height:300px;">
+                        <canvas id="expenseChart"></canvas>
+                        <div id="chart-empty-msg" class="empty-state"
+                            style="display:none; position:absolute; top:50%; width:100%; transform:translateY(-50%);">
+                            <i data-lucide="pie-chart"
+                                style="width:36px;height:36px;opacity:0.5;margin-bottom:8px;"></i>
+                            <span data-i18n="chart_empty">無資料製圖</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- Forest -->
+            <section id="page-forest" class="page-section">
+                <div id="forest-root"></div>
+            </section>
+
+            <!-- Settings -->
+            <section id="page-settings" class="page-section">
+                <div class="settings-menu">
+                    <div class="settings-profile">
+                        <div class="profile-avatar"><i data-lucide="user"></i></div>
+                        <div class="profile-info">
+                            <p class="profile-name" id="display-userid">User</p>
+                            <p class="profile-sub">Local Device</p>
+                        </div>
+                    </div>
+
+                    <button class="settings-action danger" id="logout-btn">
+                        <i data-lucide="log-out"></i>
+                        <span data-i18n="btn_logout">登出帳號</span>
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <!-- Bottom Navigation Bar -->
+        <nav class="bottom-nav">
+            <button class="nav-item active" data-target="page-ledger">
+                <i data-lucide="book"></i>
+                <span data-i18n="nav_ledger">帳本</span>
+            </button>
+            <button class="nav-item" data-target="page-accounts">
+                <i data-lucide="landmark"></i>
+                <span data-i18n="nav_accounts">帳戶</span>
+            </button>
+            <button class="nav-item tab-add" data-target="page-add">
+                <div class="fab-btn"><i data-lucide="plus"></i></div>
+                <span data-i18n="nav_add">記一筆</span>
+            </button>
+            <button class="nav-item" data-target="page-charts">
+                <i data-lucide="pie-chart"></i>
+                <span data-i18n="nav_charts">圖表</span>
+            </button>
+            <button class="nav-item" data-target="page-forest">
+                <i data-lucide="tree-pine"></i>
+                <span data-i18n="nav_forest">森林</span>
+            </button>
+            <button class="nav-item" data-target="page-settings">
+                <i data-lucide="settings"></i>
+                <span data-i18n="nav_settings">設定</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Global Setting Modal -->
+    <div class="modal" id="global-setting-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 data-i18n="globe_title">語言與地區設定</h3>
+                <button class="close-btn" id="close-globe-modal" type="button"><i data-lucide="x"></i></button>
+            </div>
+            <div class="form-group">
+                <label data-i18n="globe_lang">選擇語言</label>
+                <select id="select-lang">
+                    <option value="zh-TW">繁體中文</option>
+                    <option value="zh-CN">简体中文</option>
+                    <option value="en">English</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label data-i18n="globe_curr">選擇幣別</label>
+                <select id="select-curr">
+                    <option value="TWD">TWD (新台幣)</option>
+                    <option value="USD">USD (US Dollar)</option>
+                    <option value="CNY">CNY (人民币)</option>
+                    <option value="JPY">JPY (日円)</option>
+                    <option value="EUR">EUR (Euro)</option>
+                </select>
+            </div>
+            <button class="submit-btn" id="apply-globe-btn" data-i18n="btn_apply">套用</button>
+        </div>
+    </div>
+
+    <script src="i18n.js"></script>
+    <script src="js/store.js"></script>
+    <script src="js/gamification.js"></script>
+    <script src="js/calendar.js"></script>
+    <script src="js/transactions.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/app.js"></script>
+
+    <!-- React Dependencies for Quick Add -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script type="text/babel">
+        const { useState, useReducer, useEffect, useMemo, useCallback } = React;
+
+        // Custom Hook for debounce
+        function useDebounce(value, delay) {
+            const [debouncedValue, setDebouncedValue] = useState(value);
+            useEffect(() => {
+                const handler = setTimeout(() => {
+                    setDebouncedValue(value);
+                }, delay);
+                return () => clearTimeout(handler);
+            }, [value, delay]);
+            return debouncedValue;
+        }
+
+        // Category keyword mapping
+        const CATEGORY_MAP = {
+            "food": ["午餐", "晚餐", "早餐", "吃", "飲料", "飯", "麵", "food", "lunch", "dinner", "餐", "吃"],
+            "transport": ["搭車", "捷運", "公車", "火車", "高鐵", "車票", "交通", "計程車", "uber", "transport", "bus", "train", "mrt"],
+            "life": ["水電", "瓦斯", "房租", "日用品", "超市", "全聯", "life", "rent", "utility", "買"],
+            "entertainment": ["電影", "唱歌", "遊戲", "娛樂", "movie", "ktv", "game", "玩"],
+            "learning": ["書", "課程", "學習", "book", "course", "學"],
+            "health": ["看診", "醫", "藥", "健康", "health", "doctor", "病"]
+        };
+
+        function parseInput(input) {
+            if (!input.trim()) return null;
+            const amountMatch = input.match(/(\d+(\.\d+)?)/);
+            if (!amountMatch) return null;
+            const amountStr = amountMatch[0];
+            const amount = parseFloat(amountStr);
+            const note = input.replace(amountStr, '').trim();
+            let category = "life"; 
+            for (const [cat, keywords] of Object.entries(CATEGORY_MAP)) {
+                if (keywords.some(kw => note.toLowerCase().includes(kw))) {
+                    category = cat;
+                    break;
+                }
+            }
+            return { amount, note: note || category, category, date: new Date() };
+        }
+
+        const initialState = { budget: parseInt(localStorage.getItem('forest_finance_budget')) || 10000 };
+        function budgetReducer(state, action) {
+            if (action.type === 'SET_BUDGET') {
+                localStorage.setItem('forest_finance_budget', action.payload);
+                return { ...state, budget: action.payload };
+            }
+            return state;
+        }
+
+        function LucideIcon({ name, style, className }) {
+            const spanRef = React.useRef(null);
+            React.useEffect(() => {
+                if (spanRef.current && window.lucide) {
+                    spanRef.current.innerHTML = `<i data-lucide="${name}"></i>`;
+                    window.lucide.createIcons({ root: spanRef.current });
+                    const svg = spanRef.current.querySelector('svg');
+                    if (svg && style) Object.assign(svg.style, style);
+                    if (svg && className) svg.setAttribute('class', className);
+                }
+            }, [name, style, className]);
+            return <span ref={spanRef} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}></span>;
+        }
+
+        // Account Manager Component
+        function AccountManager() {
+            const [localAccounts, setLocalAccounts] = useState(Array.isArray(window.accounts) ? window.accounts : []);
+            const [activeId, setActiveId] = useState(window.activeAccountId);
+
+            useEffect(() => {
+                const handleUpdate = () => {
+                    if (Array.isArray(window.accounts)) {
+                        setLocalAccounts([...window.accounts]);
+                    }
+                    setActiveId(window.activeAccountId);
+                };
+                window.addEventListener('accountsChanged', handleUpdate);
+                return () => window.removeEventListener('accountsChanged', handleUpdate);
+            }, []);
+
+            const addAccount = async () => {
+                const name = prompt("請輸入新帳戶名稱：", "新帳戶");
+                if (name) {
+                    const newAcc = { id: Date.now().toString(), user: window.activeUser, name, balance: 0, icon: 'wallet' };
+                    window.accounts.push(newAcc);
+                    await window.saveAccounts();
+                }
+            };
+
+            const renameAccount = async (e, id, currentName) => {
+                e.stopPropagation(); // Prevent selecting the account when clicking rename
+                const newName = prompt("請輸入帳戶新名稱：", currentName);
+                if (newName && newName !== currentName) {
+                    const acc = window.accounts.find(a => a.id === id);
+                    if (acc) {
+                        acc.name = newName;
+                        await window.saveAccounts();
+                        // Also update state to trigger re-render
+                        setLocalAccounts([...window.accounts]);
+                    }
+                }
+            };
+
+            const selectAccount = (id) => {
+                window.activeAccountId = id;
+                localStorage.setItem('forest_finance_active_account_id', id);
+                setActiveId(id);
+                // Trigger refresh for other components
+                window.dispatchEvent(new CustomEvent('accountsChanged'));
+                if (window.renderTransactionsForDay) window.renderTransactionsForDay(window.selectedDate);
+                if (window.updateAccountsData) window.updateAccountsData();
+            };
+
+            return (
+                <div className="account-list">
+                    <h3 style={{fontSize:'0.9rem', color:'var(--text-muted)', marginBottom:'4px'}}>我的帳戶</h3>
+                    {localAccounts.map(acc => (
+                        <div 
+                            key={acc.id} 
+                            className={`account-item ${activeId === acc.id ? 'active' : ''}`}
+                            onClick={() => selectAccount(acc.id)}
+                        >
+                            <div className="account-item-icon">
+                                <LucideIcon name={acc.icon || 'wallet'} />
+                            </div>
+                            <div className="account-item-info">
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <div className="account-item-name">{acc.name}</div>
+                                    <div 
+                                        onClick={(e) => renameAccount(e, acc.id, acc.name)}
+                                        style={{ cursor: 'pointer', opacity: 0.5, display: 'flex' }}
+                                        title="重新命名"
+                                    >
+                                        <LucideIcon name="edit-3" style={{ width: '12px', height: '12px' }} />
+                                    </div>
+                                </div>
+                                <div className="account-item-balance">
+                                    {activeId === acc.id ? '當前使用中' : '點擊切換'}
+                                </div>
+                            </div>
+                            {activeId === acc.id && <LucideIcon name="check-circle" style={{color:'var(--primary)'}} />}
+                        </div>
+                    ))}
+                    <button className="add-account-btn" onClick={addAccount}>
+                        <LucideIcon name="plus" style={{width:'16px'}} /> 新增帳戶
+                    </button>
+                </div>
+            );
+        }
+
+        function QuickAdd() {
+            const [state, dispatch] = useReducer(budgetReducer, initialState);
+            const [inputValue, setInputValue] = useState('');
+            const [isAnimating, setIsAnimating] = useState(false);
+            const [isEditingBudget, setIsEditingBudget] = useState(false);
+            const [tempBudget, setTempBudget] = useState(state.budget);
+            const [lastUpdate, setLastUpdate] = useState(Date.now());
+            
+            useEffect(() => {
+                const handleUpdate = () => setLastUpdate(Date.now());
+                window.addEventListener('transactionsChanged', handleUpdate);
+                window.addEventListener('accountsChanged', handleUpdate);
+                return () => {
+                    window.removeEventListener('transactionsChanged', handleUpdate);
+                    window.removeEventListener('accountsChanged', handleUpdate);
+                };
+            }, []);
+
+            const debouncedInput = useDebounce(inputValue, 300);
+            const parsedTx = useMemo(() => parseInput(debouncedInput), [debouncedInput]);
+
+            const currentTotalExpense = useMemo(() => {
+                // Filter by active account if needed, or total?
+                // The request says "multi-account", usually means transactions belong to an account.
+                const txs = window.transactions || [];
+                const now = new Date();
+                const thisMonthTxs = txs.filter(tx => {
+                    const d = new Date(tx.date);
+                    const isCorrectAccount = tx.accountId === window.activeAccountId;
+                    return isCorrectAccount && d.getMonth() === now.getMonth() && 
+                           d.getFullYear() === now.getFullYear() && tx.amount < 0;
+                });
+                return thisMonthTxs.reduce((sum, tx) => sum + Math.abs(tx.amount), 0);
+            }, [lastUpdate, isAnimating]);
+
+            const remainingBudget = state.budget - currentTotalExpense - (parsedTx ? parsedTx.amount : 0);
+
+            const handleKeyDown = (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (parsedTx && window.activeUser) {
+                        const newTx = {
+                            id: Date.now(),
+                            category: parsedTx.category,
+                            note: parsedTx.note,
+                            amount: -Math.abs(parsedTx.amount), 
+                            date: `${parsedTx.date.getFullYear()}-${String(parsedTx.date.getMonth()+1).padStart(2,'0')}-${String(parsedTx.date.getDate()).padStart(2,'0')}`,
+                            accountId: window.activeAccountId // Link to active account
+                        };
+                        
+                        window.transactions.push(newTx);
+                        window.saveTransactions();
+                        
+                        if (window.renderTransactionsForDay) window.renderTransactionsForDay(window.selectedDate);
+                        if (window.updateAccountsData) window.updateAccountsData();
+                        if (window.renderCharts) window.renderCharts();
+                        if (window.updateStreak) window.updateStreak();
+                        if (window.renderCalendar) window.renderCalendar();
+                        
+                        setIsAnimating(true);
+                        if (window.playSubmitEffect) window.playSubmitEffect();
+                        setInputValue('');
+                        setTimeout(() => setIsAnimating(false), 500);
+                    }
+                }
+            };
+
+            return (
+                <div className={`form-wrapper quick-add-wrapper ${isAnimating ? 'pulse-anim' : ''}`} style={{ marginBottom: '16px', padding: '16px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                        <h2 style={{ fontSize: '0.95rem', color: 'var(--text-muted)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <LucideIcon name="leaf" style={{ width: '16px', height: '16px', color: 'var(--primary)' }} />
+                            森林速記 ({(Array.isArray(window.accounts) ? window.accounts.find(a => a.id === window.activeAccountId) : null)?.name || '...'})
+                        </h2>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            {isEditingBudget ? (
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                    <input type="number" value={tempBudget} onChange={(e) => setTempBudget(e.target.value)}
+                                        style={{ width: '70px', padding: '4px', fontSize: '0.8rem', borderRadius: '6px', border: '1px solid var(--border)', outline: 'none' }} />
+                                    <button onClick={() => { dispatch({ type: 'SET_BUDGET', payload: parseInt(tempBudget) || 0 }); setIsEditingBudget(false); }} 
+                                        style={{ background: 'var(--primary)', color: 'white', border: 'none', borderRadius: '6px', padding: '4px 8px', fontSize: '0.8rem', cursor: 'pointer' }}>確定</button>
+                                </div>
+                            ) : (
+                                <div style={{ fontSize: '0.8rem', fontWeight: 600, color: remainingBudget < 0 ? 'var(--expense)' : 'var(--primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                                    onClick={() => { setIsEditingBudget(true); setTempBudget(state.budget); }}>
+                                    預算餘額: ${remainingBudget.toLocaleString()} <LucideIcon name="edit-2" style={{ width: '12px', height: '12px', opacity: 0.7 }} />
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                    <input type="text" placeholder="例如: 午餐 120 (按 Enter 儲存)" value={inputValue} onChange={(e) => setInputValue(e.target.value)} onKeyDown={handleKeyDown}
+                        style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--border)', fontSize: '0.95rem', outline: 'none', backgroundColor: 'var(--card-bg)', color: 'var(--text-primary)' }} />
+                    
+                    {parsedTx && (
+                        <div style={{ marginTop: '12px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{ color: 'var(--text-muted)' }}>解析結果:</span>
+                            <strong style={{color:'var(--text-primary)'}}>{parsedTx.note}</strong> 
+                            <span style={{color:'var(--expense)', fontWeight: 'bold'}}>-${parsedTx.amount}</span>
+                            <span style={{padding: '2px 8px', background:'var(--primary)', color: 'white', borderRadius:'8px', fontSize:'0.75rem'}}>
+                                {parsedTx.category}
+                            </span>
+                            <span style={{color: 'var(--text-muted)', fontSize: '0.75rem', marginLeft: 'auto'}}>⏎ Enter</span>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        function ForestPage() {
+            const [streak, setStreak] = useState(0);
+            const [timeStage, setTimeStage] = useState('morning');
+
+            useEffect(() => {
+                const update = () => {
+                    const countEl = document.getElementById('streak-count');
+                    if (countEl) setStreak(parseInt(countEl.textContent) || 0);
+                    
+                    const hour = new Date().getHours();
+                    if (hour >= 5 && hour < 8) setTimeStage('dawn');
+                    else if (hour >= 8 && hour < 11) setTimeStage('morning');
+                    else if (hour >= 11 && hour < 16) setTimeStage('noon');
+                    else if (hour >= 16 && hour < 19) setTimeStage('sunset');
+                    else setTimeStage('night');
+                };
+                update();
+                window.addEventListener('transactionsChanged', update);
+                const interval = setInterval(update, 60000); // Check time every minute
+                return () => {
+                    window.removeEventListener('transactionsChanged', update);
+                    clearInterval(interval);
+                };
+            }, []);
+
+            const stage = useMemo(() => {
+                if (streak >= 7) return { class: 'big-tree', title: '茂盛大樹', desc: '你的記帳習慣正像這棵大樹一樣穩固！' };
+                if (streak >= 3) return { class: 'sapling', title: '成長小樹', desc: '小樹正在茁壯，繼續保持記帳好習慣！' };
+                return { class: 'seedling', title: '希望幼苗', desc: '記帳的第一步，是種下希望的種子。' };
+            }, [streak]);
+
+            // Celestial Body position based on time
+            const getCelestialStyle = () => {
+                const hour = new Date().getHours();
+                const minutes = new Date().getMinutes();
+                const totalMinutes = (hour * 60 + minutes);
+                // Mapping 0-1440 to 0-100% horizontal
+                const x = (totalMinutes / 1440) * 100;
+                // Parabola for y: y = -4(x-0.5)^2 + 1
+                const xNorm = totalMinutes / 1440;
+                const y = 100 - ((-4 * Math.pow(xNorm - 0.5, 2) + 1) * 70 + 10);
+                return { left: `${x}%`, top: `${y}%` };
+            };
+
+            return (
+                <div className={`forest-container theme-${timeStage}`}>
+                    <div className="stars-container">
+                        {[...Array(20)].map((_, i) => (
+                            <div key={i} className="star" style={{ top: `${Math.random()*60}%`, left: `${Math.random()*100}%`, animationDelay: `${Math.random()*2}s` }}></div>
+                        ))}
+                    </div>
+                    
+                    <div className={`celestial-body ${timeStage === 'night' ? 'moon' : 'sun'}`} style={getCelestialStyle()}></div>
+
+                    <div className="forest-sky">
+                        <div className="cloud" style={{ top: '10%', left: '10%' }}></div>
+                        <div className="cloud" style={{ top: '25%', right: '15%', animationDelay: '-5s' }}></div>
+                    </div>
+                    
+                    <div className="tree-stage-container">
+                        <div className={stage.class}>
+                            {stage.class === 'big-tree' && <div className="tree-leaves"></div>}
+                        </div>
+                    </div>
+
+                    <div className="growth-info">
+                        <div className="growth-title">{stage.title}</div>
+                        <div className="growth-desc">{stage.desc}</div>
+                        <div style={{ marginTop: '12px', fontSize: '0.8rem', color: 'var(--primary)', fontWeight: 700 }}>
+                            連續記帳第 {streak} 天 | 現在是 {timeStage === 'dawn' ? '清晨' : timeStage === 'morning' ? '上午' : timeStage === 'noon' ? '正午' : timeStage === 'sunset' ? '黃昏' : '夜晚'}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        const quickAddContainer = document.getElementById('quick-add-root');
+        if (quickAddContainer) ReactDOM.createRoot(quickAddContainer).render(<QuickAdd />);
+
+        const forestContainer = document.getElementById('forest-root');
+        if (forestContainer) ReactDOM.createRoot(forestContainer).render(<ForestPage />);
+
+        const accountContainer = document.getElementById('account-manager-root');
+        if (accountContainer) ReactDOM.createRoot(accountContainer).render(<AccountManager />);
+
+        setTimeout(() => { if (window.lucide) window.lucide.createIcons(); }, 100);
+    </script>
+</body>
+
+
+</html>
