@@ -1,4 +1,4 @@
-window.renderTransactionsForDay = function(dateObj) {
+function renderTransactionsForDay(dateObj) {
     const listElement = document.getElementById('transaction-list');
     if(!listElement) return;
 

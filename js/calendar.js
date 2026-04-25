@@ -10,7 +10,7 @@ function renderWeekDays() {
     dow.innerHTML = days.map(d => `<div>${d}</div>`).join('');
 }
 
-window.renderCalendar = function() {
+function renderCalendar() {
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
     

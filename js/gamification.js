@@ -1,4 +1,4 @@
-window.updateStreak = function() {
+function updateStreak() {
     if (transactions.length === 0) {
         document.getElementById('streak-count').textContent = 0;
         return;
@@ -49,7 +49,7 @@ window.updateStreak = function() {
 
 let globalAudioCtx = null;
 
-window.playSubmitEffect = function() {
+function playSubmitEffect() {
     try {
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         if (!globalAudioCtx && AudioContext) {

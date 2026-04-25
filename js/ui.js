@@ -1,4 +1,4 @@
-window.updateAccountsData = function() {
+function updateAccountsData() {
     let totalIncome = 0;
     let totalExpense = 0;
     let totalBalance = 0;

@@ -1,4 +1,4 @@
-window.renderCharts = function() {
+function renderCharts() {
     const ctx = document.getElementById('expenseChart');
     const emptyMsg = document.getElementById('chart-empty-msg');
     if(!ctx) return;

@@ -120,7 +120,7 @@ async function loadTransactions() { return loadAllData(); }
 /**
  * Save Accounts
  */
-window.saveAccounts = async function() {
+async function saveAccounts() {
     if (!activeUser) return;
     const db = await openDB();
     const tx = db.transaction(STORE_ACCOUNTS, 'readwrite');
@@ -146,7 +146,7 @@ window.saveAccounts = async function() {
 /**
  * Save Transactions
  */
-window.saveTransactions = async function() {
+async function saveTransactions() {
     if (!activeUser) return;
     const db = await openDB();
     const tx = db.transaction(STORE_TXS, 'readwrite');
