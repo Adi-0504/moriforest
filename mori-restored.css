@@ -560,87 +560,119 @@ body {
 .theme-night .growth-desc { color: #BDBDBD; }
 
 /* =========================================
-   --- Seasonal Themes (季節背景主題) ---
+   --- Premium Seasonal Themes (頂級季節環境) ---
    ========================================= */
 
-/* 春季 (Spring): 櫻花粉色系漸層，帶有生機勃勃的感覺 */
+/* 春季 (Spring) - 夢幻櫻吹雪：多層次暖粉色光暈與晨露感 */
 .forest-container.season-spring { 
-    background: linear-gradient(180deg, #FFF0F5 0%, #FAD0C4 100%) !important; 
+    background: linear-gradient(160deg, #FFF0F5 0%, #FFE6EE 40%, #FAD0C4 100%) !important; 
+}
+.forest-container.season-spring::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.7) 0%, transparent 60%);
+    pointer-events: none; z-index: 1;
 }
 
-/* 夏季 (Summer): 清新的翠綠色系漸層，呈現夏日繁盛 */
+/* 夏季 (Summer) - 盛夏光年：深邃翠綠與穿透樹冠的耶穌光 */
 .forest-container.season-summer { 
-    background: linear-gradient(180deg, #E0F2F1 0%, #A5D6A7 100%) !important; 
+    background: linear-gradient(160deg, #E0F2F1 0%, #C8E6C9 50%, #81C784 100%) !important; 
+}
+.forest-container.season-summer::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(circle at top right, rgba(255,255,255,0.6) 0%, transparent 50%),
+                linear-gradient(110deg, transparent 20%, rgba(255,255,255,0.2) 40%, transparent 60%);
+    pointer-events: none; z-index: 1;
 }
 
-/* 秋季 (Autumn): 溫暖的楓葉橙黃色系漸層，營造秋意濃厚的氛圍 */
+/* 秋季 (Autumn) - 琥珀之秋：高飽和度的琥珀、焦糖色與光影交錯 */
 .forest-container.season-autumn { 
-    background: linear-gradient(180deg, #FFF3E0 0%, #FFCC80 100%) !important; 
+    background: linear-gradient(160deg, #FFF3E0 0%, #FFE0B2 40%, #FFB74D 100%) !important; 
+}
+.forest-container.season-autumn::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(circle at 20% 10%, rgba(255, 255, 255, 0.5) 0%, transparent 60%);
+    pointer-events: none; z-index: 1;
 }
 
-/* 冬季 (Winter): 冰雪藍色系漸層，帶出靜謐冷冽的冬日感 */
+/* 冬季 (Winter) - 極光冰雪：冷冽的深邃藍色與冰晶反光 */
 .forest-container.season-winter { 
-    background: linear-gradient(180deg, #E3F2FD 0%, #90CAF9 100%) !important; 
+    background: linear-gradient(160deg, #E3F2FD 0%, #BBDEFB 40%, #64B5F6 100%) !important; 
+}
+.forest-container.season-winter::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(circle at 50% -10%, rgba(255, 255, 255, 0.8) 0%, transparent 70%);
+    pointer-events: none; z-index: 1;
 }
 
 /* =========================================
-   --- Seasonal Particles (季節飄落粒子) ---
+   --- Premium Particles (頂級 3D 物理特效粒子) ---
    ========================================= */
 
-/* 基礎粒子設定 (所有季節共用) */
+/* 基礎粒子設定：引入貝茲曲線動畫與 3D 運算準備 */
 .seasonal-particle {
     position: absolute;
     pointer-events: none; /* 避免干擾使用者點擊 */
     z-index: 5; /* 確保在背景上方但在彈出視窗下方 */
-    animation: fallAndSway linear infinite; /* 結合下落與左右搖擺的複合動畫 */
-    will-change: transform, opacity; /* 效能優化：提示瀏覽器提前準備硬體加速 */
+    /* 結合 3D 翻滾與自然風場的複合動畫 */
+    animation: premiumFall cubic-bezier(0.4, 0.0, 0.2, 1) infinite; 
+    will-change: transform, opacity; /* 效能優化：啟用 GPU 渲染 */
 }
 
-/* 粒子飄落動畫：包含下落、旋轉與左右搖曳的真實感 */
-@keyframes fallAndSway {
+/* 頂級物理掉落動畫：引入 3D 旋轉 (rotate3d) 創造空間深度，模擬真實空氣阻力與微風 */
+@keyframes premiumFall {
     0% { 
-        transform: translateY(-50px) translateX(0) rotate(0deg); 
+        transform: translate3d(0, -50px, 0) rotateX(0deg) rotateY(0deg) rotateZ(0deg); 
         opacity: 0; 
     }
-    10% { 
-        opacity: 0.8; /* 逐漸浮現 */
+    15% { 
+        opacity: 1; /* 快速淡入展現光澤 */
     }
     50% { 
-        transform: translateY(150px) translateX(30px) rotate(180deg); /* 模擬微風向右飄 */
+        /* 模擬不規則的風向吹拂與翻滾 */
+        transform: translate3d(40px, 200px, 50px) rotateX(180deg) rotateY(90deg) rotateZ(180deg); 
     }
-    90% { 
-        opacity: 0.8; 
+    85% {
+        opacity: 0.8;
     }
     100% { 
-        transform: translateY(350px) translateX(-20px) rotate(360deg); /* 模擬微風向左飄並消失 */
+        /* 最終飄落並淡出，完成一個華麗的旋轉 */
+        transform: translate3d(-30px, 450px, -50px) rotateX(360deg) rotateY(270deg) rotateZ(360deg); 
         opacity: 0; 
     }
 }
 
-/* 櫻花花瓣 (Spring) - 使用特殊圓角模擬花瓣形狀，並加入漸層與柔和陰影 */
+/* 櫻花花瓣 (Spring) - 仿真絲綢質感與漸層光暈，極致優雅 */
 .particle-flower { 
-    width: 14px; 
-    height: 14px; 
-    background: linear-gradient(135deg, #FF9A9E 0%, #FECFEF 100%); /* 櫻花粉色漸層 */
-    border-radius: 50% 0 50% 50%; /* 經典花瓣形狀 */
-    box-shadow: 0 2px 4px rgba(255, 154, 158, 0.4); /* 花瓣自帶微弱光暈感 */
-}
-
-/* 楓葉 (Autumn) - 橢圓形狀與橘紅漸層，模擬秋日落葉 */
-.particle-leaf { 
     width: 16px; 
-    height: 10px; 
-    background: linear-gradient(135deg, #FF7E5F 0%, #FEB47B 100%); /* 楓葉橘紅漸層 */
-    border-radius: 80% 20% 80% 20%; /* 葉片形狀 */
-    box-shadow: 0 2px 4px rgba(255, 126, 95, 0.3); /* 落葉陰影 */
+    height: 16px; 
+    /* 多層次漸層模擬花瓣脈絡與透光感 */
+    background: radial-gradient(circle at 30% 30%, #FFFFFF 0%, #FFB7C5 50%, #FF8DA1 100%);
+    border-radius: 100% 0 100% 0; /* 更銳利精緻的花瓣邊緣 */
+    /* 外陰影營造環境光暈，內陰影增加厚度立體感 */
+    box-shadow: 0 4px 12px rgba(255, 141, 161, 0.6), inset 2px 2px 4px rgba(255, 255, 255, 0.8);
+    filter: drop-shadow(0 0 4px rgba(255, 183, 197, 0.5)); /* 額外的柔和光澤 */
 }
 
-/* 雪花 (Winter) - 圓形白點，帶有模糊發光效果，模擬晶瑩雪花 */
-.particle-snow { 
-    width: 6px; 
-    height: 6px; 
-    background: #FFFFFF; 
-    border-radius: 50%; 
-    box-shadow: 0 0 8px rgba(255, 255, 255, 0.9); /* 強烈發光感，模擬雪晶折射 */
-    filter: blur(0.5px); /* 邊緣微模糊，增加立體感 */
+/* 楓葉 (Autumn) - 多色漸層模擬枯葉真實紋理，帶有溫暖的高光 */
+.particle-leaf { 
+    width: 20px; 
+    height: 12px; 
+    /* 橘紅過渡到金黃的真實葉片感 */
+    background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 40%, #FFA836 100%);
+    border-radius: 100% 0 100% 0; /* 細長且帶有弧度的葉片外型 */
+    /* 琥珀色外發光與微弱白色高光反射 */
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.5), inset 1px 1px 2px rgba(255, 255, 255, 0.4);
+    filter: drop-shadow(0 0 4px rgba(255, 142, 83, 0.4));
 }
+
+/* 雪晶 (Winter) - 核心耀眼、邊緣擴散的真實雪光折射效果 */
+.particle-snow { 
+    width: 8px; 
+    height: 8px; 
+    /* 核心極白，邊緣羽化的雪球 */
+    background: radial-gradient(circle at center, #FFFFFF 20%, rgba(255, 255, 255, 0.4) 80%, transparent 100%);
+    border-radius: 50%; 
+    /* 雙層光暈：內層純白發光，外層帶有冰晶藍色的擴散光 */
+    box-shadow: 0 0 15px 3px rgba(255, 255, 255, 0.9), 0 0 5px 1px rgba(100, 181, 246, 0.5);
+}
+
