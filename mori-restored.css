@@ -13,12 +13,17 @@
     --income-bg: rgba(47, 107, 79, 0.1);
     --border: rgba(47, 107, 79, 0.1);
     --nav-bg: #FFFFFF;
+    /* 頂級平滑陰影 (Smooth Shadows) 系統 */
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.02), 0 4px 8px rgba(0,0,0,0.02);
+    --shadow-md: 0 2px 4px rgba(0,0,0,0.02), 0 8px 24px rgba(0,0,0,0.04);
+    --shadow-lg: 0 4px 12px rgba(0,0,0,0.03), 0 16px 40px rgba(0,0,0,0.06);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-    font-family: 'Nunito', 'Microsoft JhengHei', '微軟正黑體', -apple-system, sans-serif;
+    font-family: 'Outfit', 'Inter', 'Microsoft JhengHei', '微軟正黑體', -apple-system, sans-serif;
     color: var(--text-primary);
     background-color: var(--bg-page);
     overflow: hidden; 
@@ -53,7 +58,7 @@ body {
     margin: 0 auto;
     background-color: var(--card-bg);
     position: relative;
-    box-shadow: 0 0 40px rgba(0,0,0,0.08); 
+    box-shadow: var(--shadow-lg); 
 }
 
 /* Top Header */
@@ -94,7 +99,7 @@ body {
 .modal.active { opacity: 1; pointer-events: all; }
 .modal-content {
     background-color: var(--card-bg); width: 100%; max-width: 360px;
-    border-radius: 20px; padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    border-radius: 20px; padding: 24px; box-shadow: var(--shadow-lg);
     transform: translateY(20px); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 .modal.active .modal-content { transform: translateY(0); }
@@ -223,14 +228,14 @@ body {
     content: ''; position: absolute; bottom: 4px; width: 4px; height: 4px; border-radius: 50%; background-color: var(--primary);
 }
 .days-grid button.today { color: var(--primary); font-weight: 700; background: var(--income-bg);}
-.days-grid button.selected { background-color: var(--primary); color: white; box-shadow: 0 4px 10px rgba(47, 107, 79, 0.3); }
+.days-grid button.selected { background-color: var(--primary); color: white; box-shadow: 0 4px 12px rgba(47, 107, 79, 0.4), 0 8px 24px rgba(47, 107, 79, 0.2); }
 
 /* Transactions list */
 .transactions-section {
     background: #FFFFFF;
     border-radius: 16px;
     padding: 16px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+    box-shadow: var(--shadow-md);
     min-height: 250px;
 }
 .section-header { margin-bottom: 16px; }
@@ -282,7 +287,7 @@ body {
 .settings-action.danger { color: var(--expense); }
 
 /* Accounts Page / Balance */
-.balance-section { background: #FFFFFF; border-radius: 16px; padding: 24px; margin-bottom: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+.balance-section { background: #FFFFFF; border-radius: 16px; padding: 24px; margin-bottom: 16px; box-shadow: var(--shadow-md); }
 .main-balance { font-size: 2.2rem; font-weight: 700; word-break: break-all;}
 .balance-summary { display: flex; align-items: center; }
 .summary-item { flex: 1; display: flex; align-items: center; gap: 10px;}
@@ -302,7 +307,7 @@ body {
 .type-btn[data-type="income"].active { background: var(--income); border-color: var(--income); color:white;}
 .type-btn[data-type="expense"].active { background: var(--expense); border-color: var(--expense); color:white;}
 
-.form-wrapper { background: #FFFFFF; border-radius: 16px; padding: 24px; box-shadow: 0 2px 10px rgba(0,0,0,0.02);}
+.form-wrapper { background: #FFFFFF; border-radius: 16px; padding: 24px; box-shadow: var(--shadow-md);}
 
 /* Gamification: Streak Badge & Micro-Interactions */
 .streak-badge {
@@ -328,7 +333,7 @@ body {
 }
 
 /* React Quick Add */
-.quick-add-wrapper { background: #FFFFFF; border-radius: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+.quick-add-wrapper { background: #FFFFFF; border-radius: 16px; box-shadow: var(--shadow-md); }
 .pulse-anim { animation: pulseBg 0.5s ease-out; }
 @keyframes pulseBg { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(47, 107, 79, 0.4); } 50% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(47, 107, 79, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(47, 107, 79, 0); } }
 
@@ -349,7 +354,7 @@ body {
     cursor: pointer;
     border: 2px solid transparent;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    box-shadow: var(--shadow-sm);
 }
 .account-item.active {
     border-color: var(--primary);
@@ -493,13 +498,14 @@ body {
 .growth-info {
     width: 100%;
     text-align: center;
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(8px);
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
     padding: 16px;
     border-radius: 16px;
-    border: 1px solid rgba(255,255,255,0.5);
+    border: var(--glass-border);
     z-index: 10;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    box-shadow: var(--shadow-lg);
 }
 
 .growth-title {
@@ -628,15 +634,15 @@ body {
         opacity: 1; /* 快速淡入展現光澤 */
     }
     50% { 
-        /* 模擬不規則的風向吹拂與翻滾 */
-        transform: translate3d(40px, 200px, 50px) rotateX(180deg) rotateY(90deg) rotateZ(180deg); 
+        /* 使用質數角度 (如 137deg, 83deg) 模擬有機、不規則的自然微風翻滾，打破數學規律 */
+        transform: translate3d(47px, 211px, 53px) rotateX(137deg) rotateY(83deg) rotateZ(167deg); 
     }
     85% {
         opacity: 0.8;
     }
     100% { 
-        /* 最終飄落並淡出，完成一個華麗的旋轉 */
-        transform: translate3d(-30px, 450px, -50px) rotateX(360deg) rotateY(270deg) rotateZ(360deg); 
+        /* 最終飄落並淡出，完成一個華麗且非線性的旋轉 */
+        transform: translate3d(-31px, 457px, -41px) rotateX(347deg) rotateY(263deg) rotateZ(353deg); 
         opacity: 0; 
     }
 }
