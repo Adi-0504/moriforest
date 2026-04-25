@@ -542,3 +542,29 @@ body {
 .theme-night .growth-info { background: rgba(0, 0, 0, 0.4); border-color: rgba(255,255,255,0.1); color: white; }
 .theme-night .growth-title { color: #81D4FA; }
 .theme-night .growth-desc { color: #BDBDBD; }
+
+/* --- Seasonal Themes --- */
+.forest-container.season-spring { background: linear-gradient(180deg, #FDF2F8 0%, #FCE7F3 100%) !important; }
+.forest-container.season-summer { background: linear-gradient(180deg, #ECFDF5 0%, #D1FAE5 100%) !important; }
+.forest-container.season-autumn { background: linear-gradient(180deg, #FFF7ED 0%, #FFEDD5 100%) !important; }
+.forest-container.season-winter { background: linear-gradient(180deg, #F0F9FF 0%, #E0F2FE 100%) !important; }
+
+/* Seasonal Particles */
+.seasonal-particle {
+    position: absolute;
+    pointer-events: none;
+    z-index: 5;
+    animation: fall linear infinite;
+}
+
+@keyframes fall {
+    0% { transform: translateY(-20px) rotate(0deg); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(300px) rotate(360deg); opacity: 0; }
+}
+
+.particle-flower { width: 10px; height: 10px; background: #F472B6; border-radius: 50% 0 50% 0; }
+.particle-leaf { width: 12px; height: 8px; background: #D97706; border-radius: 10px 0; }
+.particle-snow { width: 4px; height: 4px; background: white; border-radius: 50%; filter: blur(0.5px); }
+
